@@ -1,0 +1,11 @@
+version: '2'
+services:
+ bundler-cache:
+   image: outstand/dockup:latest
+   command: restore
+   container_name: bundler-cache
+   tty: true
+   environment:
+     COMPRESS: 'false'
+   volumes:
+     - bundler-data:/source/bundler-data

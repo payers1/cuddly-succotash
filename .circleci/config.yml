@@ -1,24 +1,60 @@
 version: 2.1
 
 jobs:
-  setup:
-    # build container used by circleci for testing
+  one:
     docker:
     - image: circleci/python:latest
     steps:
     - checkout
-    - setup_remote_docker:
-        # https://circleci.com/docs/2.0/building-docker-images/#docker-version
-        version: &docker-version 18.06.0-ce
+    - setup_remote_docker
     - run: echo "A first hello"
+    - restore_cache:
+        keys:
+          - deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+    
+    - run:
+        name: Restoring dependencies into docker volumes
+        command: |
+          NAME=dependencies
+          CACHE_PATH=/usr/local/lib/python3.8/site-packages
+          set -x
+          mkdir -p $CACHE_PATH
+          docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-start $NAME
+          docker cp $CACHE_PATH/. $NAME:/backup
+          docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-recreate $NAME
+          docker rm -f $NAME
+    
+    # - run:
+    #     name: Backing up dependencies from docker volumes
+    #     command: |
+    #       NAME=dependencies
+    #       CACHE_PATH=/usr/local/lib/python3.8/site-packages
+    #       set -x
+    #       docker-compose -f docker-compose.yml -f circle-dockup.yml run --name $NAME $NAME backup
+    #       docker cp $NAME:/backup/. $CACHE_PATH
+    #       docker rm -f $NAME
+    
+    - save_cache:
+        key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+        paths:
+          - /usr/local/lib/python3.8/site-packages
+
     - run: >
         docker build
         .
-
+  two:
+    docker:
+    - image: circleci/python:latest
+    steps:
+    - checkout
+    - setup_remote_docker
+    - run: echo "A first hello"
+    
 
 workflows:
   version: 2
-  commit:
+  one_and_two:
     jobs:
-    - setup
+    - one
+    - two
     
