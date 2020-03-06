@@ -17,10 +17,10 @@ jobs:
     #     docker cp test.txt configs:/cfg
     #     docker run --volumes-from configs python:3.8.1-slim-buster pip install
     - run: docker build -t payers1/test-container .
-    - run: docker run --name app payers1/test-container pip install -r requirements.txt
-    - run: |
-        mkdir -p ~/.cache/pip
-        docker cp app:/root/.cache/pip ~/.cache/pip
+    # - run: docker run --name app payers1/test-container pip install -r requirements.txt
+    # - run: |
+    #     mkdir -p ~/.cache/pip
+    #     docker cp app:/root/.cache/pip ~/.cache/pip
     # docker cp app:/usr/local/lib/python3.8/site-packages ~/.cache/pip
 
     - save_cache:
