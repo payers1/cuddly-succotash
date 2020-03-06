@@ -16,6 +16,7 @@ jobs:
     #     docker create -v /cfg --name configs alpine:3.4 /bin/true
     #     docker cp test.txt configs:/cfg
     #     docker run --volumes-from configs python:3.8.1-slim-buster pip install
+    - run: cp -r ~/.cache/pip ~/project/.cache
     - run: docker build -t payers1/test-container .
     # - run: docker run --name app payers1/test-container pip install -r requirements.txt
     # - run: |
