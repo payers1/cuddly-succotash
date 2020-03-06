@@ -10,24 +10,25 @@ jobs:
     - run: echo "A first hello"
     - restore_cache:
         keys:
-          - deps6-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          - deps7-{{ .Branch }}-{{ checksum "requirements.txt" }}
 
     # - run: |
     #     docker create -v /cfg --name configs alpine:3.4 /bin/true
     #     docker cp test.txt configs:/cfg
     #     docker run --volumes-from configs python:3.8.1-slim-buster pip install
-    - run: cp -r ~/.cache/pip ~/project/.cache
+    # - run: cp -r ~/.cache/pip ~/project/.cache
     - run: docker build -t payers1/test-container .
-    # - run: docker run --name app payers1/test-container pip install -r requirements.txt
-    # - run: |
-    #     mkdir -p ~/.cache/pip
-    #     docker cp app:/root/.cache/pip ~/.cache/pip
-    # docker cp app:/usr/local/lib/python3.8/site-packages ~/.cache/pip
+    - run: docker run --name app payers1/test-container /bin/true
+    - run: |
+        docker cp app:/usr/local/lib/python3.8/site-packages site_packages
+    # mkdir -p ~/.cache/pip
+    # docker cp app:/root/.cache/pip ~/.cache/pip
+    
 
     - save_cache:
-        key: deps6-{{ .Branch }}-{{ checksum "requirements.txt" }}
+        key: deps7-{{ .Branch }}-{{ checksum "requirements.txt" }}
         paths:
-          - ~/.cache/pip
+          - ~/site_packages
     
     # - run:
     #     name: Restoring bundler cache into docker volumes
