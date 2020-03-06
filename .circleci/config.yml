@@ -16,7 +16,7 @@ jobs:
         name: Restoring bundler cache into docker volumes
         command: |
           NAME=dependencies-cache
-          CACHE_PATH=~/dependencies-cache
+          CACHE_PATH=~/project/dependencies-cache-1
           set -x
           mkdir -p $CACHE_PATH
           docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-start $NAME
@@ -29,7 +29,7 @@ jobs:
         name: Backing up bundler cache from docker volumes
         command: |
           NAME=dependencies-cache
-          CACHE_PATH=~/dependencies-cache
+          CACHE_PATH=~/project/dependencies-cache
           set -x
           docker-compose -f docker-compose.yml -f circle-dockup.yml run --name $NAME $NAME backup
           docker cp $NAME:/backup/. $CACHE_PATH
