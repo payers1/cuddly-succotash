@@ -16,7 +16,7 @@ jobs:
         name: Restoring dependencies into docker volumes
         command: |
           NAME=dependencies
-          CACHE_PATH=/usr/local/lib/python3.8/site-packages
+          CACHE_PATH=deps
           set -x
           mkdir -p $CACHE_PATH
           docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-start $NAME
@@ -37,7 +37,7 @@ jobs:
     - save_cache:
         key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
         paths:
-          - /usr/local/lib/python3.8/site-packages
+          - deps
 
     - run: >
         docker build
