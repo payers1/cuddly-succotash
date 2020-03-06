@@ -13,7 +13,7 @@ jobs:
           - deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
 
     - run: |
-        docker create -v /cfg --name configs alpine:3.4 /bin/true
+        docker create -v /cfg --name configs python:3.8.1-slim-buster /bin/true
         docker cp test.txt configs:/usr/local/lib/python3.8/site-packages
         docker run --volumes-from configs python:3.8.1-slim-buster
     
