@@ -11,29 +11,34 @@ jobs:
     - restore_cache:
         keys:
           - deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+
+    - run: |
+        docker create -v /cfg --name configs alpine:3.4 /bin/true
+        docker cp test.txt configs:/usr/local/lib/python3.8/site-packages
+        docker run --volumes-from configs python:3.8.1-slim-buster
     
-    - run:
-        name: Restoring bundler cache into docker volumes
-        command: |
-          NAME=dependencies-cache
-          CACHE_PATH=~/project/dependencies-cache-1
-          set -x
-          mkdir -p $CACHE_PATH
-          docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-start $NAME
-          docker cp $CACHE_PATH/. $NAME:/backup
-          docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-recreate $NAME
-          docker rm -f $NAME
+    # - run:
+    #     name: Restoring bundler cache into docker volumes
+    #     command: |
+    #       NAME=dependencies-cache
+    #       CACHE_PATH=~/project/dependencies-cache-1
+    #       set -x
+    #       mkdir -p $CACHE_PATH
+    #       docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-start $NAME
+    #       docker cp $CACHE_PATH/. $NAME:/backup
+    #       docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-recreate $NAME
+    #       docker rm -f $NAME
       
-    # Back up the same volume to circle cache
-    - run:
-        name: Backing up bundler cache from docker volumes
-        command: |
-          NAME=dependencies-cache
-          CACHE_PATH=~/project/dependencies-cache
-          set -x
-          docker-compose -f docker-compose.yml -f circle-dockup.yml run --name $NAME $NAME backup
-          docker cp $NAME:/backup/. $CACHE_PATH
-          docker rm -f $NAME
+    # # Back up the same volume to circle cache
+    # - run:
+    #     name: Backing up bundler cache from docker volumes
+    #     command: |
+    #       NAME=dependencies-cache
+    #       CACHE_PATH=~/project/dependencies-cache
+    #       set -x
+    #       docker-compose -f docker-compose.yml -f circle-dockup.yml run --name $NAME $NAME backup
+    #       docker cp $NAME:/backup/. $CACHE_PATH
+    #       docker rm -f $NAME
     
     # - save_cache:
     #     key: v4-bundler-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
