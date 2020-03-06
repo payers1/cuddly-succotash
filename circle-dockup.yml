@@ -9,3 +9,6 @@ services:
      COMPRESS: 'false'
    volumes:
      - bundler-data:/source/bundler-data
+
+volumes:
+  bundler-data: {}
