@@ -10,7 +10,7 @@ jobs:
     - run: echo "A first hello"
     - restore_cache:
         keys:
-          - deps3-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          - deps4-{{ .Branch }}-{{ checksum "requirements.txt" }}
 
     # - run: |
     #     docker create -v /cfg --name configs alpine:3.4 /bin/true
@@ -19,12 +19,12 @@ jobs:
     - run: docker build -t payers1/test-container .
     - run: docker run --name app payers1/test-container pip install -r requirements.txt
     - run: |
-        docker cp app:/usr/local/lib/python3.8/site-packages site-packages
+        docker cp app:/usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
 
     - save_cache:
-        key: deps3-{{ .Branch }}-{{ checksum "requirements.txt" }}
+        key: deps4-{{ .Branch }}-{{ checksum "requirements.txt" }}
         paths:
-          - site-packages
+          - /usr/local/lib/python3.8/site-packages
     
     # - run:
     #     name: Restoring bundler cache into docker volumes
