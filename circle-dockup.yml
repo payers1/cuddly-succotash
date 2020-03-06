@@ -1,9 +1,9 @@
 version: '3'
 services:
- bundler-cache:
+ dependencies-cache:
    image: outstand/dockup:latest
    command: restore
-   container_name: bundler-cache
+   container_name: dependencies-cache
    tty: true
    environment:
      COMPRESS: 'false'

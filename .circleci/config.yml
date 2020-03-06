@@ -15,8 +15,8 @@ jobs:
     - run:
         name: Restoring bundler cache into docker volumes
         command: |
-          NAME=bundler-cache
-          CACHE_PATH=~/bundler-cache
+          NAME=dependencies-cache
+          CACHE_PATH=~/dependencies-cache
           set -x
           mkdir -p $CACHE_PATH
           docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-start $NAME
@@ -24,20 +24,26 @@ jobs:
           docker-compose -f docker-compose.yml -f circle-dockup.yml up --no-recreate $NAME
           docker rm -f $NAME
       
-    # - run:
-    #     name: Backing up dependencies from docker volumes
-    #     command: |
-    #       NAME=dependencies
-    #       CACHE_PATH=/usr/local/lib/python3.8/site-packages
-    #       set -x
-    #       docker-compose -f docker-compose.yml -f circle-dockup.yml run --name $NAME $NAME backup
-    #       docker cp $NAME:/backup/. $CACHE_PATH
-    #       docker rm -f $NAME
+    # Back up the same volume to circle cache
+    - run:
+        name: Backing up bundler cache from docker volumes
+        command: |
+          NAME=dependencies-cache
+          CACHE_PATH=~/dependencies-cache
+          set -x
+          docker-compose -f docker-compose.yml -f docker/circle-dockup.yml run --name $NAME $NAME backup
+          docker cp $NAME:/backup/. $CACHE_PATH
+          docker rm -f $NAME
     
-    - save_cache:
-        key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
-        paths:
-          - deps
+    # - save_cache:
+    #     key: v4-bundler-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+    #     paths:
+    #       - ~/bundler-cache
+    
+    # - save_cache:
+    #     key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+    #     paths:
+    #       - deps
 
     - run: >
         docker build
