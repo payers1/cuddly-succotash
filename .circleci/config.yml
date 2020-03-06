@@ -1,0 +1,24 @@
+version: 2.1
+
+jobs:
+  setup:
+    # build container used by circleci for testing
+    docker:
+    - image: circleci/python:latest
+    steps:
+    - checkout
+    - setup_remote_docker:
+        # https://circleci.com/docs/2.0/building-docker-images/#docker-version
+        version: &docker-version 18.06.0-ce
+    - run: echo "A first hello"
+    - run: >
+        docker build
+        .
+
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+    - setup
+    
